@@ -1,24 +1,25 @@
-#use pip install riotwatcher
-
-#look up summonner through their name
-#look up last 10 matches and find their pref role
-
-#pythonlibrary riot api
-#look up summoner puuid using summoner v4
-#look up match history using puuid and match
-#for each match id which is just a string , for loop to go through each match and find what role they played
-#sort static ints in the function that increase count- return the highest role count
-#"teamposition" time.sleep(seconds)
-#return
+import time
 from riotwatcher import LolWatcher
+#export api token as this environment variable
+RIOT_TOKEN  = 'RGAPI-9226d731-4f80-4515-b34b-17776573f0b4'
 
-lol_watcher = LolWatcher('RGAPI-b7897195-c3f2-402a-9cc0-51ae52be6e10')
+lol_watcher = LolWatcher(RIOT_TOKEN)
 
 
 my_region = 'na1'
 
-me = lol_watcher.summoner.by_name(my_region, 'Geeraph')
-print(me)
-
-guan = lol_watcher.summoner.by_name('na1','D1v1ner1ght')
-print(guan)
+summoner_name = input("Please enter a summoner name: ")                                                #user input for summoner name
+summoner_data = lol_watcher.summoner.by_name(my_region, summoner_name)                                 #list of summoner data
+summoner_puuid = summoner_data['puuid']
+match_history = lol_watcher.match.matchlist_by_puuid('AMERICAS',summoner_puuid,type= 'ranked', queue=420 ,start=0, count=10) # finds the last 10 ranked matches of player
+player_role= []
+for match in range(len(match_history)):                                                #iterate through each match and finds the team position and adds it to player role
+    temp = lol_watcher.match.by_id('AMERICAS',match_history[match])
+    time.sleep(1.5)
+    for participant in temp['info']['participants']:
+        if participant['summonerName'] == summoner_name:
+            player_role.append(participant['teamPosition'])
+            break
+        else: 
+            continue
+print(summoner_name + '\'s main role is ' +  max(set(player_role), key=player_role.count)) #prints most frequent role based on list
