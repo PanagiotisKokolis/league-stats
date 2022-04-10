@@ -1,7 +1,8 @@
 import time
+import os
 from riotwatcher import LolWatcher
 #export api token as this environment variable
-RIOT_TOKEN  = 'RGAPI-9226d731-4f80-4515-b34b-17776573f0b4'
+RIOT_TOKEN  = os.environ.get('RIOT_TOKEN')
 
 lol_watcher = LolWatcher(RIOT_TOKEN)
 
